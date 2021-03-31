@@ -14,7 +14,8 @@ Ctrl.js支持web可视化编程，可用于App界面设计。支持安卓手机�
 使用指南：
 1.	打开“开维控制精灵”，注册登录。
 2.	运行其中的javascript示例代码，即可看到js执行结果。
-3.	或浏览器打开javacript在线开发IDE环境（网址：http://ikaiwei.com:8889/ctrljs/），同手机号登录。创建应用，编写js代码并调试运行。
+3.	或浏览器打开javacript在线开发IDE环境，网址：http://ikaiwei.com:8889/ctrljs/
+    同手机号登录。创建应用，编写js代码并调试运行。
 
 主要功能：
 1.	在线调试javascript代码。
