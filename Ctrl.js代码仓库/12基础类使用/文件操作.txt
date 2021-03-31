@@ -1,0 +1,49 @@
+//--------------------------------------------------------------------------------------
+//Ctrl.js 在线开发环境：http://ikaiwei.com:8889/ctrljs/#/login
+//Ctrl.js 客户端app（开维控制精灵）华为下载：https://appstore.huawei.com/app/C100728387
+//Ctrl.js 使用：开发网站或app登录注册、编写代码后‘同步代码’到app、'执行代码'即可
+//Ctrl.js 打包：可将代码或网页链接直接生成apk，点击‘打包’按钮，等待下载即可
+//Ctrl.js 云控：监控所有手机运行状态，并可实时远控手机
+//Ctrl.js 保活：禁止屏幕休眠；开启悬浮框；关闭电池优化
+//Ctrl.js 脚本应用市场：可下载实例直接运行，或者二次开发
+//--------------------------------------------------------------------------------------
+
+
+// 脚本功能：对文件的基本操作
+// 运行环境：华为手机，安卓9.0以上版本；
+
+
+// 创建一个文件，名称为abc.txt，保存在sd卡里面
+var file_path = "/sdcard/abc.txt";
+
+// 如果文件不存在就创建一个，并写一些内容到文件中
+if(!file.exists(file_path))
+{
+    file.create(file_path);
+    file.write(file_path,"abc\n"); // 写入文件中
+    file.append(file_path,"123\n"); // 追加内容
+    file.append(file_path,"456\n"); 
+}
+
+// 打印文件多少行
+var file_lines = file.getFileLiens(file_path);
+toast("文件行数： " + file_lines.toString());
+
+// 读取文件时，务必设置缓冲区，一次操作减少IO
+var array = new Array();
+for(var i = 0;i < file_lines;i++)
+{
+	// 把文件每行内容读到缓冲区中
+	array.push(file.readLineByNum(file_path,i));
+}
+
+// 打印文件内容，每行打印一次
+toast("文件内容：");
+for(var k = 0;k < array.length;k++)
+{
+    toast(array[k]);
+    sleep(3000);
+}
+
+toast("执行完毕！");
+

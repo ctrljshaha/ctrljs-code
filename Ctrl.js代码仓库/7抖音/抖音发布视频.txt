@@ -1,0 +1,35 @@
+var version =app.getVersionByName("抖音短视频")
+
+if(version=="13.0.0"){
+var w = device.width();
+var h = device.height();
+init()
+var path ="/sdcard/360/1.mp4"
+file.share(path)
+sleep(2000)
+var ss=cs.text("抖音短视频").exists()
+if(ss==true)
+{
+ cs.text("抖音短视频").findOne().touch();
+     sleep(5000);
+     cs.text("下一步").findOne().touch();
+     sleep(2000);
+cs.text("下一步").findOne().touch();
+    sleep(2000);
+     cs.text("完成").findOne().touch();
+}else
+{
+cs.mouseswipe(w /4*3, h -100, w / 4,h-90,500);
+sleep(1000)
+ cs.text("抖音短视频").findOne().touch();
+    sleep(5000);
+    cs.text("下一步").findOne().touch();
+    sleep(2000);
+cs.text("下一步").findOne().touch();
+    sleep(2000);
+    cs.text("发布").findOne().touch();
+}
+}else
+{
+msg("支持抖音13.0.0版本")
+}

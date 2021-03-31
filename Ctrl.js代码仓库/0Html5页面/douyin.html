@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta charset="utf-8">
+      <title>抖音自动切换视频html5调用Ctrl.js实现</title> 
+		<style>
+			*{
+				margin: 0;
+				padding: 0;
+			}
+			.center-in-center{
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				-webkit-transform: translate(-50%, -50%);
+				-moz-transform: translate(-50%, -50%);
+				-ms-transform: translate(-50%, -50%);
+				-o-transform: translate(-50%, -50%);
+				transform: translate(-50%, -50%);
+			}
+			.douyinbutton{
+				margin:auto;
+				width: 120px;
+				height: 50px;
+				font-size:17px;
+			}
+		</style>
+      <script>
+
+			//--------------------------------------------------------------------------------------------
+			//Ctrl.js 在线帮助：http://ikaiwei.com:8889/ctrljsapi/index.html
+			//Ctrl.js IDE环境：http://ikaiwei.com:8889/ctrljs/#/login
+			//Ctrl.js 客户端app（开维控制精灵）下载：https://appstore.huawei.com/app/C100728387
+			//Ctrl.js js方式使用：登录IDE注册、下载app登录（打开无障碍）、编写代码后‘同步代码’到app、‘执行代码’
+			//        也可保存代码到云盘,即在‘我的脚本’下新建文件保存，app中查看‘我的代码’运行。
+			//Ctrl.js Web方式使用，H5中调用Ctrl.js安卓底层函数：
+			//				1.将这段实例代码保存为html页面，放在外网服务器。
+			//				2.在开维控制精灵'浏览'中输入保存的链接地址，即可运行。
+			//Ctrl.js 打包：可将js代码直或者html5接生成apk，点击‘我的打包’中的‘新增’，选择脚本或者输入链接‘保存’等待下载即可
+			//        后一种方式可以将外网的html5页面一键生成安卓apk程序。
+			//--------------------------------------------------------------------------------------------
+
+      // 抖音切换视频函数
+      function openDouyin(){
+		
+			init(); // 跳转“无障碍”选项，如果没有这个函数则默认不跳转。
+		
+			// 获取手机的分辨率
+			var w = device.width();
+			var h = device.height();
+			// 定义滑动次数
+			var times = 10;
+
+			if(!app.launchApp("抖音短视频"))
+				throw '打开app失败，终止程序。';
+
+			sleep(3000); // 等待跳过广告
+
+			//第二步开始自动循环
+			for(var i = 0;i < times;i++)
+			{
+				sleep(3000); // 每隔几秒刷新视频
+				toast("Hello World"); // 加个提示
+				cs.mouseswipe(w / 2 - 30, h / 4 * 3, w / 2 + 20, h / 4 * 1,500);
+			}
+
+			msg("程序执行完毕");
+		}
+		
+      </script>
+   </head>
+   <body>
+	<button type="button" class="douyinbutton center-in-center" onclick="openDouyin()">抖音测试</button>
+   </body>
+</html>

@@ -1,0 +1,49 @@
+
+var version =app.getVersionByName("抖音短视频")
+if(version=="13.0.0"){
+if(!init()) // 跳转“无障碍”选项，如果没有这个函数则默认不跳转。
+    throw '服务未开启';
+// 获取手机的分辨率
+var w = device.width();
+var h = device.height();
+
+// 定义滑动次数
+var times = 5;
+var text = "真好";
+if(!app.launchApp("抖音短视频"))
+  	throw '打开app失败，终止程序。';
+sleep(5000);
+
+// 开始点赞
+for(var i = 0;i < times;i++)
+{
+
+
+         // 点赞
+            cs.id("com.ss.android.ugc.aweme:id/ay6").findOne().getParent().click();
+
+        sleep(100);
+
+
+
+
+    cs.id("com.ss.android.ugc.aweme:id/g0h").findOne().getParent().click();
+
+    sleep(100);
+     cs.text("转发").findOne().touch();
+    sleep(100);
+    cs.id("com.ss.android.ugc.aweme:id/aik").findOne().setText(text);
+    sleep(100);
+    cs.id("com.ss.android.ugc.aweme:id/aj7").findOne().touch();
+
+
+    sleep(1000);
+ cs.mouseswipe(w / 2 - 30, h / 4 * 3, w / 2 + 20, h / 4 * 1,500);
+}
+
+msg("程序执行完毕");
+
+}else
+{
+msg("支持抖音13.0.0版本")
+}

@@ -1,0 +1,32 @@
+var gzArr=new Array("出门问问","大众网青岛")
+var version =app.getVersionByName("抖音短视频")
+if(version=="13.0.0"){
+init()
+if(!app.launchApp("抖音短视频"))
+  	throw '打开app失败，终止程序。';
+
+sleep(3500);
+//点击最下面“我”
+cs.text("我").findOne().getParent().getParent().getParent().click();
+sleep(2000);
+//点击关注
+cs.text("关注").findOne().getParent().click();
+sleep(2000);
+
+for(var i = 0; i < gzArr.length;i++) {
+    	var name = gzArr[i];
+	//打开搜索框
+	var contro =cs.id("com.ss.android.ugc.aweme:id/ai4").findOne();
+	contro.setText(name);
+	//搜索
+
+	//查找已关注
+	var size =cs.text("已关注").findOne().touch();
+	sleep(2000);
+
+}
+}
+else
+{
+msg("支持抖音13.0.0版本")
+}

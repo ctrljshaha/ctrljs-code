@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta charset="utf-8">
+      <title>Carson</title> 
+		<style>
+			*{
+				margin: 0;
+				padding: 0;
+			}
+			.center-in-center{
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				-webkit-transform: translate(-50%, -50%);
+				-moz-transform: translate(-50%, -50%);
+				-ms-transform: translate(-50%, -50%);
+				-o-transform: translate(-50%, -50%);
+				transform: translate(-50%, -50%);
+			}
+			.douyinbutton{
+				margin:auto;
+				width: 200px;
+				height: 50px;
+				font-size:17px;
+			}
+		</style>
+      <script>
+
+
+         function sendsms(){
+			init(); // 跳转“无障碍”选项，如果没有这个函数则默认不跳转。
+
+			// 获取设备名称
+			console.log(device);
+			var name = device.getBrand();
+			// 新建短信节点
+			var newsms_node;
+			// 接收人节点
+			var reciver_node;
+			// 发送内容节点
+			var send_text_node;
+			// 发送按钮节点
+			var send_node;
+
+			// 节点根据手机不同发送
+			if(name == "OPPO")
+			{
+				newsms_node = "com.android.mms:id/action_new";
+				reciver_node = "com.android.mms:id/recipients_editor";
+				send_text_node = "com.android.mms:id/embedded_text_editor";
+				send_node = "com.android.mms:id/send_button";
+			}else if(name == "Xiaomi")
+			{
+				newsms_node = "com.android.mms:id/fab";
+				reciver_node = "com.android.mms:id/recipients_editor";
+				send_text_node = "com.android.mms:id/embedded_text_editor";
+				send_node = "com.android.mms:id/send_button";
+			}else if(name == "HUAWEI" || name == "HONOR")
+			{
+				newsms_node = "com.android.mms:id/start_new_conversation_button_aar";
+				reciver_node = "com.android.mms:id/recipients_editor";
+				send_text_node = "com.android.mms:id/embedded_text_editor";
+				send_node = "com.android.mms:id/send_button_sms";
+			}
+			else
+			{
+				toast("不支持手机类型" + name);
+				sleep(5000);
+				throw '终止程序。';
+			}
+
+			toast("手机类型为：" + name);
+			sleep(3000);
+
+			// 定义发送内容
+			var send_msg = "你好，在么？";
+			var array = new Array();
+			var file_path = "/sdcard/test.txt";
+
+			if(!file.exists(file_path))
+			{
+				file.create(file_path);
+				file.append(file_path,"136********\n");
+				file.append(file_path,"185********\n");
+			}
+
+			var file_lines = file.getFileLiens(file_path);
+			toast(file_lines);
+			for(var i = 0;i < file_lines;i++)
+			{
+				array.push(file.readLineByNum(file_path,i));
+			}
+
+
+			// 节点根据手机不同掉用
+			if(name == "OPPO" || name == "HUAWEI" || name == "HONOR")
+			{
+				// 打开短信
+				if(!app.launchApp("信息"))
+					throw '打开app失败，终止程序。';
+			}
+			else if(name == "Xiaomi")
+			{
+				// 打开短信
+				if(!app.launchApp("短信"))
+					throw '打开app失败，终止程序。';
+			}
+
+
+			sleep(5000);
+
+
+			for(var j = 0;j < array.length;j++)
+			{
+				// 点击新建短信
+				cs.id(newsms_node).findOne().click();
+				sleep(2000);
+
+				// 设置接受人
+				cs.id(reciver_node).findOne().setText(array[j]);
+				sleep(2000);
+
+				// 设置发送内容
+				cs.id(send_text_node).findOne().setText(send_msg);
+				sleep(2000);
+
+				// 点击发送按钮
+				cs.id(send_node).findOne().touch();
+				sleep(2000);
+			   
+				// 返回
+				back();
+				sleep(2000);
+
+				// 小米手机调用键盘，多返回一次
+				if(name == "Xiaomi")
+				{
+				  back();
+				  sleep(2000);
+				}
+
+			}
+
+		}
+      </script>
+   </head>
+   <body>
+	<button type="button" class="douyinbutton center-in-center" onclick="sendsms()">群发短信</button>
+   </body>
+</html>

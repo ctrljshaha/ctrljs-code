@@ -1,0 +1,30 @@
+//--------------------------------------------------------------------------------------
+//Ctrl.js 在线开发环境：http://ikaiwei.com:8889/ctrljs/#/login
+//Ctrl.js 客户端app（开维控制精灵）华为下载：https://appstore.huawei.com/app/C100728387
+//Ctrl.js 使用：开发网站或app登录注册、编写代码后‘同步代码’到app、'执行代码'即可
+//Ctrl.js 打包：可将代码或网页链接直接生成apk，点击‘打包’按钮，等待下载即可
+//Ctrl.js 云控：监控所有手机运行状态，并可实时远控手机
+//Ctrl.js 保活：禁止屏幕休眠；开启悬浮框；关闭电池优化
+//Ctrl.js 脚本应用市场：可下载实例直接运行，或者二次开发
+//--------------------------------------------------------------------------------------
+
+
+// 脚本功能：网络请求，读取网页内容
+// 运行环境：华为手机，安卓9.0以上版本；
+
+
+var s = {"headers":{"Accept-Language":"zh-cn,zh;q=0.5"}}
+http.get("http://www.ikaiwei.com/adroid-up/playmusic.html",s,function(res,err){
+	if(err){
+		msg(err)
+	}else{
+		msg(res.body.string())
+	}
+})
+
+// 也可以使用 get同步方式, 推荐使用异步, 同步示例如下:
+var s = {"headers":{"Accept-Language":"zh-cn,zh;q=0.5"}}
+var r = http.get("http://www.ikaiwei.com/adroid-up/playmusic.html",s);
+msg(r.body.string())
+
+

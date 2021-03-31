@@ -1,0 +1,399 @@
+﻿//--------------------------------------------------------------------------------------------
+//Ctrl.js 在线帮助：http://ikaiwei.com:8889/ctrljsapi/index.html
+//Ctrl.js IDE脚本编写环境：http://ikaiwei.com:8889/ctrljs/#/login
+//Ctrl.js 客户端app（开维控制精灵）下载：https://appstore.huawei.com/app/C100728387
+//Ctrl.js 使用：登录IDE注册、下载app登录（打开无障碍）、编写代码后‘同步代码’到app、‘执行代码’
+//        也可保存代码到云盘,即在‘我的脚本’下新建文件保存，app中查看‘我的代码’运行。
+//Ctrl.js 打包：可将代码直接生成apk，点击‘我的打包’中的‘新增’，选择脚本‘保存’等待下载即可
+//Ctrl.js 开维云控：远程控制手机：点击‘云控平台’，选择手机后‘打开此设备云控’，‘开始投屏’即可
+//--------------------------------------------------------------------------------------------
+
+
+// 脚本功能：快手小游戏-连连看
+// 运行环境：华为手机，安卓9.0以上版本;Ctrl.jsV2.8;快手小游戏版本V3.8.6(版本需一致)
+// 注意事项：1.确保‘快手小游戏’登录状态 2.无障碍功能打开
+//           3.将kslianliankan目录放到手机SD卡根目录
+
+init(); // 跳转“无障碍”选项，如果没有这个函数则默认不跳转。
+
+var g_width = device.width();
+var g_height = device.height();
+var dir_name = "/sdcard/kslianliankan/";
+
+function enterMainPage(appName){
+    if (!app.launchApp(appName))
+	  	throw '打开app失败，终止程序。';    	
+    sleep(5000);
+}
+
+
+var TAB_MAX_X=7;
+var TAB_MAX_Y=10;
+var gOffsetX = 48;
+var gOffsetY = 667;
+var gOneBlockSize = 142;
+var gImgCap1;
+var CHILD_IMG_NUM_MAX = 8;
+var imgChild = new Array(CHILD_IMG_NUM_MAX);
+
+var gMapTable = new Array();
+for(i=0;i<TAB_MAX_Y;i++){
+    gMapTable[i] = new Array(i);
+    for(var j=0;j<TAB_MAX_X;j++){
+        gMapTable[i][j]=0;
+    }
+}
+function getAimageValue(bigImg,x,y,w,h){
+    var i;
+    var p = null;
+    for(i=0;i<CHILD_IMG_NUM_MAX;i++){
+        
+        var rect = image.rect(x,y,w,h);
+        p = image.findImage(bigImg, imgChild[i], 0.9,rect);
+		
+        if(p){
+            var ret = i+1;
+            return ret;
+        }else{
+        }
+    }
+    
+    return -1;
+}
+
+
+function initChildImg(imgDir){
+    for(var i=1;i<=CHILD_IMG_NUM_MAX;i++){
+        imgChild[i-1] = image.read(imgDir + i + ".png");
+        if(imgChild[i-1] == null){
+            toast(imgDir + i + ".png 图片读取失败");
+            toast("结束");
+        }
+    }
+}
+
+
+
+function getImgTableValue(){
+    var i;
+    var j=0;
+    var x;
+    var y;
+    var imgVal = -1;
+    y = gOffsetY;
+    
+    for(i=0;i<TAB_MAX_Y;i++){
+        x = gOffsetX;
+        for(j=0; j<TAB_MAX_X; j++){
+            imgVal = getAimageValue(gImgCap1,x, y,gOneBlockSize,gOneBlockSize);
+            if(imgVal < 0){
+                toast("getAimageValue failed");
+            }
+            
+            gMapTable[i][j] = imgVal; 
+            x += gOneBlockSize;
+        }
+        
+        y += gOneBlockSize;
+    }
+}
+
+function canConnect(x1,y1,x2,y2,r){
+    //两个方块是否可以连通函数
+    // 将传入的二维数组赋值给本地全局变量，
+    //result = r
+    // 如果有一个为0 直接返回-1;
+    if ((gMapTable[x1][y1] == 0) || (gMapTable[x2][y2] == 0)){
+        return -1;
+    }
+    
+    if ((x1 == x2) && (y1 == y2) ){
+        return -1;
+    }
+    
+    if (gMapTable[x1][y1] != gMapTable[x2][y2]){
+        return -1;
+    }
+    
+    // 先判断横向可连通
+    if (horizontalCheck(x1,y1,x2,y2)==0){
+        return 0;
+    }
+    
+    // 在判断纵向可连通
+    if (verticalCheck(x1,y1,x2,y2)==0){
+        return 0;
+    }
+    
+    // 判断一个拐点的可连通情况
+    if (turnOnceCheck(x1,y1,x2,y2)==0){
+        return 0;
+    }
+    
+    // 判断两个拐点的可连通情况
+    if (turnTwiceCheck(x1,y1,x2,y2)==0){
+        return 0;
+    }
+    
+    // 都不可连通，返回-1;
+    return -1;
+}
+
+function horizontalCheck(x1,y1,x2,y2){
+    if ((x1 == x2) &&( y1 == y2 )){ //判断两个不是同一个方块
+        return -1;
+    }
+    
+    if( x1 != x2){      //判断两个的纵坐标相同
+        return -1;
+    }
+    
+    startY = Math.min(y1, y2);
+    endY = Math.max(y1, y2);
+    
+    //判断两个方块是否相邻
+    if ( (endY - startY) == 1){
+//		log("horizontalCheck: block is near");
+        return 0;
+    }
+        
+    //判断两个方块通路上是否都是0，有一个不是，就说明不能联通，返回-1
+    for(var i=startY+1; i<endY; i++ ){
+        if (gMapTable[x1][i] != 0){
+            return -1;
+        }
+    }
+    
+	//log("horizontalCheck: block's path is clean");
+    return 0;
+}
+
+function verticalCheck(x1,y1,x2,y2){
+    //判断垂直方向能否连通
+    //
+    
+    //判断不是同一个方块
+    if ((x1 == x2) && (y1 == y2)){
+        return -1;
+    }
+    
+    //判断两个横坐标相同
+    if (y1 != y2){
+        return -1;
+    }
+    
+    startX = Math.min(x1, x2);
+    endX = Math.max(x1, x2);
+    
+    //判断两个方块是否相邻
+    if ((endX - startX) == 1){
+        return 0;
+    }
+    
+    //判断两方块儿通路上是否可连。
+    for(var i=startX+1; i<endX; i++ ){
+        if (gMapTable[i][y1] != 0){
+            return -1;
+        }
+    }
+    
+    return 0;
+}
+
+function turnOnceCheck(x1,y1,x2,y2){
+    //判断单拐点情况能否连通
+    
+    //实现单拐点校验。
+    if ((x1 == x2) && (y1 == y2)){
+        return -1;
+    }
+    
+    //一个拐点，说明两个方块必须在不同行不同列！
+    if ((x1 != x2) && (y1 != y2)){
+        //cx cy dx dy 记录两个拐点的坐标
+        cx = x1;
+        cy = y2;
+        dx = x2;
+        dy = y1;
+        //拐点为空，从第一个点到拐点并且从拐点到第二个点可通，则整条路可通。
+        if (gMapTable[cx][cy] == 0){
+            if ( (0==horizontalCheck(x1, y1, cx, cy)) && (0==verticalCheck(cx, cy, x2, y2))){
+	
+                return 0;
+            }
+        }
+        
+        if (gMapTable[dx][dy] == 0){
+            if ((0==verticalCheck(x1, y1, dx, dy)) && (0==horizontalCheck(dx, dy, x2, y2))){
+		
+                return 0;
+            }
+        }
+    }
+    
+    return -1;
+}
+
+function turnTwiceCheck(x1,y1,x2,y2){
+    //两个拐点的情况能否连通
+    
+    if ((x1 == x2) && (y1 == y2)){
+        return -1;
+    }
+    
+    //遍历整个数组找合适的拐点
+    for(var i=0; i<TAB_MAX_Y; i++ ){
+        for(var j=0; j<TAB_MAX_X; j++ ){
+            //不为空不能作为拐点
+            if (gMapTable[i][j] != 0){
+                continue;
+            }
+            
+            //不和被选方块在同一行列的
+            //不能作为拐点
+            if ( (i != x1) && (i != x2) && (j != y1) && (j != y2)){
+                continue;
+            }
+            
+            //作为交点的部分也要过滤掉
+            if ((i == x1 && j == y2) || (i == x2 && j == y1)){
+                continue;
+            }
+            
+            if ((0==turnOnceCheck(x1, y1, i, j)) && ((0==horizontalCheck(i, j, x2, y2)) || (0==verticalCheck(i, j, x2, y2)))){
+             
+				return 0;
+            }
+            
+            if ((0==turnOnceCheck(i, j, x2, y2)) && ((0==horizontalCheck(x1, y1, i, j)) || (0==verticalCheck(x1, y1, i, j)))){
+                
+				return 0;
+            }
+        }
+    }
+
+    return -1;
+}
+
+var TIME_INTERVAL = 55;
+var PRESS_TIME = 2;  //80~150
+// 自动消除
+function autoRelease(game_x,game_y){
+    for(i=0;i<TAB_MAX_Y;i++){
+        for(j=0;j<TAB_MAX_X;j++){
+            // 以上两个for循环，定位第一个选中点
+            if (gMapTable[i][j] != 0){
+                for(var m=0;m<TAB_MAX_Y;m++){
+                    for(var n=0;n<TAB_MAX_X;n++){
+                        if (gMapTable[m][n] != 0){
+                            // 后两个for循环定位第二个选中点
+                            if (canConnect(i,j,m,n,gMapTable)==0){
+                                // 执行消除算法并返回
+                                //log("可连接点("+i+","+j+") ("+m+","+n+")");
+                                gMapTable[i][j] = 0;
+                                gMapTable[m][n] = 0;
+                                
+                                x1 = game_x + j*gOneBlockSize + 15;
+                                y1 = game_y + i*gOneBlockSize+ 18;
+                                x2 = game_x + n*gOneBlockSize + 15;
+                                y2 = game_y + m*gOneBlockSize + 18;
+
+								//toast("click"+x1 +"x"+y1);
+                                cs.mousepress(x1, y1,PRESS_TIME);
+                                sleep(TIME_INTERVAL);
+                                
+                                //toast("click"+x2 +"x"+y2);
+                                cs.mousepress(x2, y2 ,PRESS_TIME);
+                                sleep(TIME_INTERVAL);
+                                return 0;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    return -1;
+}
+
+function autoRemove(){
+    for(var i=0;i<40;i++){
+        autoRelease(gOffsetX,gOffsetY);
+    }
+    
+    while(0 != finishCheck()){
+        autoRelease(gOffsetX,gOffsetY);
+    }
+}
+
+function printTable(){
+    var tmpStr="\n[";
+    for(i=0;i<TAB_MAX_Y;i++){
+        for(j=0;j<TAB_MAX_X;j++){
+            tmpStr = tmpStr + gMapTable[i][j] +" ";
+        }
+        tmpStr = tmpStr + "]\n["
+    }
+    toast(tmpStr+"]");
+}
+
+function finishCheck(){
+    for(i=0;i<TAB_MAX_Y;i++){
+        for(j=0;j<TAB_MAX_X;j++){
+            if(0 != gMapTable[i][j]){
+                return -1;
+            }
+        }
+    }
+    
+    return 0;
+}
+
+
+function mainEntrence(){ 
+    toast("手机分辨率是" + g_width + "x" + g_height);
+    
+    
+    autoShotScreen();
+    sleep(5000);
+    initChildImg(dir_name);
+    
+    enterMainPage("快手小游戏");
+    
+  	click("连连看");
+
+    sleep(3000);
+  	
+  	click("快速匹配");
+  	while (true) 
+    {
+        if (cs.id("com.kwai.sogame:id/tv_loading").find().size() != 0) {
+          break;
+        };
+    };
+	sleep(3000);
+    
+  	screenshots(dir_name + "cap1.png");
+    sleep(2000);
+
+    gImgCap1 = image.read(dir_name + "cap1.png");
+    if(gImgCap1 == null){
+        toast(dir_name + "cap1.png 读取失败");
+    };
+    
+    sleep(2000);
+    getImgTableValue();
+	
+    printTable();
+	toast("终于扫描完了，开始！");
+    autoRemove();
+    
+    printTable();
+    
+
+    toast("退出脚本");
+
+};
+
+ mainEntrence();

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta charset="utf-8">
+      <title>Carson</title>  
+      <script>
+
+
+         function openDouyin(){
+			init(); // 跳转“无障碍”选项，如果没有这个函数则默认不跳转。
+
+			// 定义指定发送消息好友的名称
+			var friend_name = "1111";
+
+			// 定义指定发送消息的内容
+			var msg = "你好！";
+
+			// 定义一个全局的等待时间，给予机器反应时间
+			var wait_time = 2000;
+
+			// 打开QQ app
+			if(!app.launchApp("QQ"))
+			  throw '打开app失败，终止程序。';
+
+			sleep(4000);
+
+			// 搜索该好友
+			cs.id("com.tencent.mobileqq:id/et_search_keyword").findOne().touch();
+			sleep(wait_time);
+			cs.id("com.tencent.mobileqq:id/et_search_keyword").findOne().setText(friend_name);
+			sleep(wait_time);
+
+			// 点击搜索到的第一个好友
+			cs.id("com.tencent.mobileqq:id/image").findOne().getParent().getParent().click();
+			sleep(wait_time);
+
+			// 设置要发送的内容
+			cs.id("com.tencent.mobileqq:id/input").findOne().setText(msg);
+			sleep(wait_time);
+
+			//点击发送按钮
+			cs.id("com.tencent.mobileqq:id/fun_btn").findOne().click();
+			sleep(wait_time)
+
+		}
+      </script>
+   </head>
+   <body>
+      
+      <button type="button" id="button1" onclick="openDouyin()">给QQ指定好友发消息</button>
+
+   </body>
+</html>

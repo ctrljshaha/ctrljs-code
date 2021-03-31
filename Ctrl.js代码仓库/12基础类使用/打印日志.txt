@@ -1,0 +1,46 @@
+//--------------------------------------------------------------------------------------------
+//Ctrl.js 在线开发环境：http://ikaiwei.com:8889/ctrljs/#/login
+//Ctrl.js 客户端app（开维控制精灵）华为下载：https://appstore.huawei.com/app/C100728387
+//Ctrl.js 使用：网页或app登录注册、开发环境编写代码后‘同步代码’到app、'执行代码'即可。
+//Ctrl.js 打包：可将代码或者网页链接直接生成apk，点击‘打包’按钮，等待下载即可。
+//Ctrl.js 云控：监控所有手机运行状态，并可实时远控手机。
+//--------------------------------------------------------------------------------------------
+
+// 脚本功能：consloe类的使用，打印日志用
+// 运行环境：华为手机，安卓9.0以上版本；
+
+
+// 1.控制台输入框的使用。类似cmd的命令行输入
+console.show();
+console.setSize(1000,1000);  // 设置大小
+console.setPosition(500,500);
+var s= console.input(); // 控制台输入一个数值，点击最下面一行直接输入后点击确定按钮
+msg(s); // 弹出框显示输入内容
+console.hide(); // 隐藏输入框
+
+
+// 2.控制台显示的使用
+console.show();
+console.setSize(1000,1000);  // 设置大小
+console.setPosition(500,500);
+
+// 颜色不同的输出显示
+console.log("111%d%f",(1+2),4.1);
+console.v("111%d%f",(1+2),4.1);
+console.info("111%d%f",(1+2),4.1);
+console.warn("111%d%f",(1+2),4.1);
+console.error("111%d%f",(1+2),4.1);
+console.log("1111111111111111111//111111111111111111111111111");
+//console.clear(); // 清空控制台
+sleep(3000);
+console.hide(); // 隐藏控制台
+
+// 3.控制台显示的使用
+// 条件判断显示
+console.show();
+console.setSize(1000,1000);  // 设置大小
+console.setPosition(500,500);
+var a = 1+1;
+console.ass(a!=2,"aaa");
+sleep(5000);
+//console.hide(); // 隐藏控制台

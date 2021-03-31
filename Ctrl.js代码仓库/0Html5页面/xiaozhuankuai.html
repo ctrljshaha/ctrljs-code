@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta charset="utf-8">
+      <title>Carson</title> 
+		<style>
+			*{
+				margin: 0;
+				padding: 0;
+			}
+			.center-in-center{
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				-webkit-transform: translate(-50%, -50%);
+				-moz-transform: translate(-50%, -50%);
+				-ms-transform: translate(-50%, -50%);
+				-o-transform: translate(-50%, -50%);
+				transform: translate(-50%, -50%);
+			}
+			.douyinbutton{
+				margin:auto;
+				width: 200px;
+				height: 50px;
+				font-size:17px;
+			}
+		</style>
+      <script>
+
+
+         function openDouyin(){
+			init();
+			var x = device.width() / 8,
+				x1 = x,
+				x2 = x * 3,
+				x3 = x * 5,
+				x4 = x * 7;
+			var y = device.height() / 2;
+
+			var count = 100; // 循环100轮，直到结束后方可操作。也可以修改以延长消砖时间
+
+			var gameName = "消砖块";
+
+			// 打开快手小游戏
+			if(!app.launchApp("快手小游戏"))
+				throw '打开app失败，终止程序。';
+
+			sleep(5000);
+
+			while(cs.text(gameName).find().size() == 0)
+			{
+				cs.mouseswipe(device.width() / 2 - 30, device.height() / 4 * 3, device.width() / 2 + 20, device.height() / 4 * 1,500);
+				sleep(2000);
+			}
+			click(gameName);
+			sleep(5000);
+
+			click("快速匹配");
+			var yo = 1, //点击用时。
+				ys = 60; //点击延时。
+
+			while (true) 
+			{
+				if (cs.id("com.kwai.sogame:id/tv_loading").find().size() != 0) {
+				  break;
+				};
+			};
+
+			// 开始消砖
+			while (count-- > 0) 
+			{
+				cs.mousepress(x1, y, yo);
+				sleep(ys);
+				cs.mousepress(x2, y, yo);
+				sleep(ys);
+				cs.mousepress(x3, y, yo);
+				sleep(ys);
+				cs.mousepress(x4, y, yo);
+				sleep(ys);
+			};
+
+			toast("程序完成");
+
+		}
+      </script>
+   </head>
+   <body>
+	<button type="button" class="douyinbutton center-in-center" onclick="openDouyin()">快手小游戏-消砖块</button>
+   </body>
+</html>

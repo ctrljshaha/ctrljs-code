@@ -1,0 +1,121 @@
+//--------------------------------------------------------------------------------------------
+//Ctrl.js 在线帮助：http://ikaiwei.com:8889/ctrljs/#/login
+//Ctrl.js IDE脚本编写环境：http://ikaiwei.com:8889/ctrljs/#/login
+//Ctrl.js 客户端app（开维控制精灵）下载：https://appstore.huawei.com/app/C100728387
+//Ctrl.js 使用：登录IDE注册、下载app登录（打开无障碍）、编写代码后‘同步代码’到app、‘执行代码’
+//        也可保存代码到云盘,即在‘我的脚本’下新建文件保存，app中查看‘我的代码’运行。
+//Ctrl.js 打包：可将代码直接生成apk，点击‘我的打包’中的‘新增’，选择脚本‘保存’等待下载即可
+//Ctrl.js 开维云控：远程控制手机：点击‘云控平台’，选择手机后‘打开此设备云控’，‘开始投屏’即可
+//--------------------------------------------------------------------------------------------
+
+
+// 脚本功能：抖音得到未回关的关注用户  
+// 运行环境：华为手机，安卓9.0以上版本；抖音短视频最新版
+// 运行结果：文件运行完毕后，会在手机根目录生成douyin.txt
+// 注意事项：1.确保抖音登陆状态
+
+init(); // 跳转“无障碍”选项，如果没有这个函数则默认不跳转。
+
+var myArray = new Array();
+var flag = false;
+var group_name;
+var path = "/sdcard/douyin.txt";
+var my_name;
+if(file.exists(path))
+{
+	file.delete(path);
+}
+file.create(path);
+
+//打开抖音短视频app
+if(!app.launchApp("抖音短视频"))
+  	throw '打开app失败，终止程序。';
+  	
+sleep(3500);
+//点击最下面“我”
+cs.text("我").findOne().getParent().getParent().getParent().click();
+sleep(2000);
+//获取自己的昵称
+my_name = cs.id("com.ss.android.ugc.aweme:id/cnn").findOne().getText();
+sleep(2000);
+//点击关注
+cs.text("关注").findOne().getParent().click();
+sleep(2000);
+//统计自己关注的人的数量，将关注的人的名称放到数组myArray中
+var size = cs.id("com.ss.android.ugc.aweme:id/fdu").find().size();
+sleep(1000);
+toast(size);
+for(var i = 0;i < size;i++)
+{
+    group_name = cs.id("com.ss.android.ugc.aweme:id/fdu").find().get(i).getText();
+	myArray.push(group_name);
+}
+while(cs.id("com.ss.android.ugc.aweme:id/dms").findOne().scrollForward())
+{
+    sleep(1000);
+	var s = cs.id("com.ss.android.ugc.aweme:id/fdu").find().size();
+    for(var j = 0;j < s;j++)
+    {
+    	for(var k = 0;k < myArray.length;k++)
+        {
+            group_name = cs.id("com.ss.android.ugc.aweme:id/fdu").find().get(j).getText();
+        	if(group_name == myArray[k])
+            {
+            	flag = true;
+            }
+        }
+        if(flag == false)
+        {
+        	myArray.push(group_name);
+        }
+        flag = false;
+    }
+}
+
+//由于此时处于最底部，所以滑动到最上面
+while(cs.id("com.ss.android.ugc.aweme:id/dms").findOne().scrollBackward())
+{
+	      
+}
+sleep(1000);
+
+for(var i = 0;i < myArray.length;i++)
+{
+    //滑动寻找到myArray[i]
+    while(cs.text(myArray[i]).find().size() == 0)
+    {
+    	cs.id("com.ss.android.ugc.aweme:id/dms").findOne().scrollForward();
+        sleep(500);
+    }
+    //点击该关注的人
+	cs.text(myArray[i]).findOne().getParent().getParent().getParent().click();
+    sleep(2000);
+    //点击这个人所关注的人
+    cs.text("关注").findOne().getParent().click();
+    sleep(2000);
+    if(cs.text("私信").find().size() == 0)
+    {
+        toast("可以点击");
+    	//滑动查看这个人是否关注了自己
+        while(cs.text(my_name).find().size() == 0)
+        {
+            var scroll = cs.id("com.ss.android.ugc.aweme:id/dms").findOne().scrollForward();
+            sleep(2000);
+            if(scroll == false)
+            {
+                //向文件追加该人物
+                file.append(path,myArray[i]+"\n");
+                break;
+            }
+        }
+        sleep(2000);
+        //返回
+        back();
+        sleep(2000);
+    }
+    //返回
+    back();
+    sleep(2000);
+    
+}
+msg("程序执行完毕");

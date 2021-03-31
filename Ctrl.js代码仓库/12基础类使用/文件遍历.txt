@@ -1,0 +1,65 @@
+//--------------------------------------------------------------------------------------
+//Ctrl.js 在线开发环境：http://ikaiwei.com:8889/ctrljs/#/login
+//Ctrl.js 脚本应用市场：http://ikaiwei.com:8889/ctrljs/#/Market
+//Ctrl.js 手机app（开维控制精灵）华为下载：https://appstore.huawei.com/app/C100728387
+//Ctrl.js 使用：开发网站或app登录注册、编写代码后‘同步代码’到app、'执行代码'即可
+//Ctrl.js 打包：可将代码或网页链接直接生成apk，点击‘打包’按钮，等待下载即可
+//Ctrl.js 云控：监控所有手机运行状态，并可实时远控手机
+//Ctrl.js 保活：禁止屏幕休眠；开启悬浮框；关闭电池优化
+//--------------------------------------------------------------------------------------
+
+
+// 脚本功能：文件遍历
+// 运行环境：华为手机，安卓9.0以上版本；
+
+// 文件总数
+var nFiles = 0;
+
+// 函数功能：打印数据
+function scanCmd(strFileName)
+{
+	toast(strFileName);
+    nFiles++; // 文件个数加1
+}
+
+// 函数功能：遍历目录
+// 函数参数：strCurPath为当前目录
+function scanFilePath(strCurPath) 
+{     
+  	// 判断传入路径，如果非法则退出
+    var str = /^([/][^\/:*?<>|]+[/]?)+$/;
+    if (str.test(strCurPath) == false) 
+		throw "非法文件路径：" + strCurPath;
+
+  	// 获取strCurPath当前目录下所有文件夹和文件
+    var arr = file.listDir(strCurPath);
+  
+    // 遍历文件和文件夹
+    for (var i = 0; i < arr.size(); i++) 
+    {
+        // 并接全目录
+        var FilePath =strCurPath+"/"+arr.get(i);
+      
+        // 判断文件还是路径
+        if (file.isDir(FilePath)) 
+        {
+			// 是路径
+           	scanFilePath(FilePath); // 递归遍历
+        } 
+      	else if (file.isFile(FilePath)) 
+      	{
+          	// 是文件
+          	scanCmd(FilePath); // 处理文件
+        }
+    }
+}
+
+// 设置目录
+var path ="/sdcard/baidu";
+//var path ="/sdcard";
+
+// 遍历目录
+scanFilePath(path);
+
+toast("文件总数：" + nFiles);
+

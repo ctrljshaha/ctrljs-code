@@ -1,0 +1,44 @@
+//--------------------------------------------------------------------------------------------
+//Ctrl.js 在线帮助：http://ikaiwei.com:8889/ctrljsapi/index.html
+//Ctrl.js IDE脚本编写环境：http://ikaiwei.com:8889/ctrljs/#/login
+//Ctrl.js 客户端app（开维控制精灵）下载：https://appstore.huawei.com/app/C100728387
+//Ctrl.js 使用：登录IDE注册、下载app登录（打开无障碍）、编写代码后‘同步代码’到app、‘执行代码’
+//        也可保存代码到云盘,即在‘我的脚本’下新建文件保存，app中查看‘我的代码’运行。
+//Ctrl.js 打包：可将代码直接生成apk，点击‘我的打包’中的‘新增’，选择脚本‘保存’等待下载即可
+//Ctrl.js 开维云控：远程控制手机：点击‘云控平台’，选择手机后‘打开此设备云控’，‘开始投屏’即可
+//--------------------------------------------------------------------------------------------
+
+
+// 脚本功能：微信给指定好友或者群发一条信息
+// 运行环境：华为安卓9.0以上版本；微信版本V7.0.13
+// 注意事项：1.确保微信登陆状态 2.微信的节点会随版本变化，需经常更换节点ID
+
+init(); // 跳转“无障碍”选项，如果没有这个函数则默认不跳转。
+
+// 设置发送人或者群名；发送内容
+var friend_name = "张三";
+var msg = "测试";
+
+// 打开微信
+if(!app.launchApp("微信"))
+  	throw '打开app失败，终止程序。';
+sleep(2000);
+
+// 点击搜索按钮
+cs.id("com.tencent.mm:id/f4u").findOne().touch();
+sleep(2000);
+
+// 搜索好友 
+cs.id("com.tencent.mm:id/bfl").findOne().setText(friend_name);
+sleep(2000);
+
+// 点击搜索到的好友
+cs.text(friend_name).findOne().touch();
+sleep(2000);
+
+// 设置要发送的内容
+cs.id("com.tencent.mm:id/ak7").findOne().setText(msg);
+sleep(2000);
+// 点击发送按钮
+cs.id("com.tencent.mm:id/amr").findOne().click();
+

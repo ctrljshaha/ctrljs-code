@@ -1,0 +1,55 @@
+//--------------------------------------------------------------------------------------------
+//Ctrl.js 在线帮助：http://ikaiwei.com:8889/ctrljsapi/index.html
+//Ctrl.js IDE脚本编写环境：http://ikaiwei.com:8889/ctrljs/#/login
+//Ctrl.js 客户端app（开维控制精灵）下载：https://appstore.huawei.com/app/C100728387
+//Ctrl.js 使用：登录IDE注册、下载app登录（打开无障碍）、编写代码后‘同步代码’到app、‘执行代码’
+//        也可保存代码到云盘,即在‘我的脚本’下新建文件保存，app中查看‘我的代码’运行。
+//Ctrl.js 打包：可将代码直接生成apk，点击‘我的打包’中的‘新增’，选择脚本‘保存’等待下载即可
+//Ctrl.js 开维云控：远程控制手机：点击‘云控平台’，选择手机后‘打开此设备云控’，‘开始投屏’即可
+//--------------------------------------------------------------------------------------------
+
+
+// 脚本功能：分享淘宝店铺给微信某人
+// 运行环境：华为手机，安卓9.0以上版本；
+// 注意事项：1.确保微信登陆状态 2.微信的节点会随版本变化
+
+
+init(); // 跳转“无障碍”选项，如果没有这个函数则默认不跳转。
+
+if(!app.launchApp("手机淘宝"))
+  	throw '打开app失败，终止程序。';
+
+sleep(1000)
+cs.text("我的淘宝").findOne().touch()
+sleep(1000)
+cs.text("关注店铺").findOne().touch()
+sleep(1000)
+cs.text("达人").findOne().touch()
+sleep(1000)
+
+
+var f = cs.className("android.support.v7.widget.RecyclerView").drawingOrder(1).findOne()
+
+for(var i = 0;i<f.getChildCount();i++){
+    sleep(500)
+    f.getChild(i).touch()
+}
+ sleep(4000)
+f =  cs.id("com.taobao.taobao:id/weex_render_view").findOne()
+f.getChild(1).getChild(3).touch()
+ sleep(1000)
+cs.text("分享帐号").findOne().touch()
+ sleep(1000)
+cs.text("分享到微信").findOne().touch()
+sleep(1000)
+
+cs.text("通讯录").findOne().touch()
+sleep(1000)
+cs.text("张三").findOne().touch()
+sleep(1000)
+cs.text("发消息").findOne().touch()
+sleep(1000)
+cs.id("com.tencent.mm:id/amb").findOne().touch()
+cs.id("com.tencent.mm:id/amb").findOne().paste()
+sleep(1000)
+cs.id("com.tencent.mm:id/ami").findOne().touch()

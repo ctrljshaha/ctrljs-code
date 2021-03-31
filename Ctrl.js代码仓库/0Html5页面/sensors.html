@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta charset="utf-8">
+      <title>读取手机屏幕亮度</title> 
+		<style>
+			*{
+				margin: 0;
+				padding: 0;
+			}
+			.center-in-center{
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				-webkit-transform: translate(-50%, -50%);
+				-moz-transform: translate(-50%, -50%);
+				-ms-transform: translate(-50%, -50%);
+				-o-transform: translate(-50%, -50%);
+				transform: translate(-50%, -50%);
+			}
+			.douyinbutton{
+				margin:auto;
+				width: 200px;
+				height: 50px;
+				font-size:17px;
+			}
+		</style>
+      <script>
+
+     // 函数功能:读取屏幕亮度
+     function onsensors()
+     {
+			// 监听亮度传感器
+			sensors.on("LIGHT","onLight");
+			sleep(5000);
+			//取消监听亮度传感器
+			sensors.off("LIGHT");
+		 }
+		
+		 // 函数功能：回调传感器函数
+		 function onLight(x, y, z)
+		 {
+		  	toast("当前亮度为" + x);
+		 }
+		
+      </script>
+   </head>
+   <body>
+	<button type="button" class="douyinbutton center-in-center" onclick="onsensors()">监听亮度传感器</button>
+   </body>
+</html>

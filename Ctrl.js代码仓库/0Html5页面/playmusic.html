@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta charset="utf-8">
+      <title>Carson</title> 
+		<style>
+			*{
+				margin: 0;
+				padding: 0;
+			}
+			.center-in-center{
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				-webkit-transform: translate(-50%, -50%);
+				-moz-transform: translate(-50%, -50%);
+				-ms-transform: translate(-50%, -50%);
+				-o-transform: translate(-50%, -50%);
+				transform: translate(-50%, -50%);
+			}
+			.douyinbutton{
+				margin:auto;
+				width: 200px;
+				height: 50px;
+				font-size:17px;
+			}
+		</style>
+      <script>
+
+
+         function playmusic(){
+			init(); // 跳转“无障碍”选项，如果没有这个函数则默认不跳转。
+
+			// 获取设备名称
+			// 播放 1.mp3
+			media.playMusic("/sdcard/1.mp3");
+			sleep(5000);
+			// 暂停播放音乐
+			media.pauseMusic();
+			sleep(5000);
+			// 继续播放音乐
+			media.resumeMusic();
+
+		}
+      </script>
+   </head>
+   <body>
+	<button type="button" class="douyinbutton center-in-center" onclick="playmusic()">播放音乐</button>
+   </body>
+</html>

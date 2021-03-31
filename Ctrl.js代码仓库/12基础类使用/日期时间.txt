@@ -1,0 +1,74 @@
+//--------------------------------------------------------------------------------------
+//Ctrl.js 在线开发环境：http://ikaiwei.com:8889/ctrljs/#/login
+//Ctrl.js 客户端app（开维控制精灵）华为下载：https://appstore.huawei.com/app/C100728387
+//Ctrl.js 使用：开发网站或app登录注册、编写代码后‘同步代码’到app、'执行代码'即可
+//Ctrl.js 打包：可将代码或网页链接直接生成apk，点击‘打包’按钮，等待下载即可
+//Ctrl.js 云控：监控所有手机运行状态，并可实时远控手机
+//Ctrl.js 保活：禁止屏幕休眠；开启悬浮框；关闭电池优化
+//Ctrl.js 脚本应用市场：可下载实例直接运行，或者二次开发
+//--------------------------------------------------------------------------------------
+
+
+// 脚本功能：日期时间的获取
+// 运行环境：华为手机，安卓9.0以上版本；
+
+// =========================================================
+// 函数功能：获取当前时间
+// =========================================================
+function CurentTime()
+    { 
+        var now = new Date();
+       
+        var year = now.getFullYear();       //年
+        var month = now.getMonth() + 1;     //月
+        var day = now.getDate();            //日
+       
+        var hh = now.getHours();            //时
+        var mm = now.getMinutes();          //分
+       
+        var clock = year + "-";
+       
+        if(month < 10)
+            clock += "0";
+       
+        clock += month + "-";
+       
+        if(day < 10)
+            clock += "0";
+           
+        clock += day + " ";
+       
+        if(hh < 10)
+            clock += "0";
+           
+        clock += hh + ":";
+        if (mm < 10) clock += '0'; 
+        clock += mm; 
+        return(clock); 
+    } 
+
+// 打印当前时间：
+toast("当前时间：" + CurentTime());
+
+
+// =========================================================
+// 时间函数的应用
+// =========================================================
+var d = new Date();
+var months = 
+            [
+            "January", "February", "March", "April", "May", "June", 
+            "July", "August", "September", "October", "November", "December"
+            ];
+
+var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+toast("当前时间：" + d.getTime());
+toast("当前时间：" + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds() + ":" + d.getMilliseconds());
+toast("当前日期：" + d.getDate()); // 返回1-31
+toast("当前年份：" + d.getFullYear());
+toast("当前月份：" + months[d.getMonth()]); // 返回0-11
+toast("星期几：" + days[d.getDay()]); // 返回0-6
+
+
+

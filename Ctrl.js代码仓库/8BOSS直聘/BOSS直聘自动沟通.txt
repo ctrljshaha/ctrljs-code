@@ -1,0 +1,80 @@
+//--------------------------------------------------------------------------------------------
+//Ctrl.js 在线帮助：http://ikaiwei.com:8889/ctrljsapi/index.html
+//Ctrl.js IDE脚本编写环境：http://ikaiwei.com:8889/ctrljs/#/login
+//Ctrl.js 客户端app（开维控制精灵）下载：https://appstore.huawei.com/app/C100728387
+//Ctrl.js 使用：登录IDE注册、下载app登录（打开无障碍）、编写代码后‘同步代码’到app、‘执行代码’
+//        也可保存代码到云盘,即在‘我的脚本’下新建文件保存，app中查看‘我的代码’运行。
+//Ctrl.js 打包：可将代码直接生成apk，点击‘我的打包’中的‘新增’，选择脚本‘保存’等待下载即可
+//Ctrl.js 开维云控：远程控制手机：点击‘云控平台’，选择手机后‘打开此设备云控’，‘开始投屏’即可
+//--------------------------------------------------------------------------------------------
+
+
+
+// 脚本功能：BOSS直聘自动沟通源码
+// 运行环境：华为手机，安卓9.0以上版本；BOSS直聘最新版
+// 注意事项：1.客户端无障碍功能开启 2.确保BOSS直聘登陆状态
+//           3.BOSS直聘自动发送沟通信息后，对方回复才可发送简历
+
+init(); // 跳转“无障碍”选项，如果没有这个函数则默认不跳转。
+
+
+// 打开BOSS直聘
+var search_work = "Android开发";
+
+// 定义滚动的次数，即沟通前多少页的职位，默认3页
+var number = 3;
+var k = 1;
+
+if(!app.launchApp("BOSS直聘"))
+  	throw '打开app失败，终止程序。';
+sleep(4000);
+
+// 点击上方搜索按钮
+cs.id("com.hpbr.bosszhipin:id/ly_menu").findOne().getChild(1).click();
+sleep(2000);
+
+// 设置搜索的内容
+cs.id("com.hpbr.bosszhipin:id/et_search").findOne().setText(search_work);
+sleep(2000);
+
+// 点击第一个选项进入搜索列表
+cs.id("com.hpbr.bosszhipin:id/tv_filtered_name").findOne().touch();
+sleep(2000);
+
+// 滚动循环给每一个职位沟通
+var size = cs.id("com.hpbr.bosszhipin:id/boss_job_card_view").find().size();
+for(var i = 0;i < size;i++)
+{
+    // 点击每一个职位
+	cs.id("com.hpbr.bosszhipin:id/boss_job_card_view").find().get(i).getParent().click();
+    sleep(2000);
+    // 点击立即沟通
+    cs.id("com.hpbr.bosszhipin:id/btn_chat").findOne().click();
+    sleep(2000);
+    back();
+    sleep(2000);
+    back();
+}
+
+while(cs.id("com.hpbr.bosszhipin:id/list_view").findOne().scrollForward())
+{
+	var s = cs.id("com.hpbr.bosszhipin:id/boss_job_card_view").find().size();
+    for(var j = 0;j < s;j++)
+    {
+        // 点击每一个职位
+        cs.id("com.hpbr.bosszhipin:id/boss_job_card_view").find().get(j).getParent().click();
+        sleep(2000);
+        // 点击立即沟通
+        cs.id("com.hpbr.bosszhipin:id/btn_chat").findOne().click();
+        sleep(2000);
+        back();
+        sleep(2000);
+        back();
+    }
+
+	k++;
+	if(k >= number)
+	{
+		break;
+	}
+}

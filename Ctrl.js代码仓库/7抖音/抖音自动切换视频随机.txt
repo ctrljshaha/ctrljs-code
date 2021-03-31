@@ -1,0 +1,73 @@
+//--------------------------------------------------------------------------------------------
+//Ctrl.js 在线帮助：http://ikaiwei.com:8889/ctrljsapi/index.html
+//Ctrl.js IDE环境：http://ikaiwei.com:8889/ctrljs/login.jsp
+//Ctrl.js 客户端app（开维控制精灵）下载：https://appstore.huawei.com/app/C100728387
+//Ctrl.js 使用：登录IDE注册、下载app登录（打开无障碍）、编写代码后‘同步代码’到app、‘执行代码’
+//        也可保存代码到云盘,即在‘我的脚本’下新建文件保存，app中查看‘我的代码’运行。
+//Ctrl.js 打包：可将代码直接生成apk，点击‘我的打包’中的‘新增’，选择脚本‘保存’等待下载即可
+//--------------------------------------------------------------------------------------------
+
+
+// 脚本功能：抖音自动切换视频
+// 运行环境：华为手机，安卓9.0以上版本;Ctrl.js V2.8;抖音短视频最新版
+// 注意事项：1.确保抖音登陆状态 2.测试滚屏错误
+
+
+// 定义变量start_time和end_time为分享开始时间和结束时间，其他时间段停止程序，例如早9点到晚22点之间发帖
+var start_time = 9;
+var end_time = 21;
+
+// 每次分享随机时间区间，例如6秒到20秒之间
+var start_share = 6;
+var end_share = 20;
+
+var wait_send_time = 1000; // 1秒
+
+// 定义滑动次数
+var times = 5000; // 5千次退出，有个上限
+
+// 主代码
+
+//随机函数，随机产生一个minNum到maxNumn的值
+function randomNum(minNum,maxNum){ 
+    switch(arguments.length){ 
+        case 1: 
+            return parseInt(Math.random()*minNum+1,10); 
+        break; 
+        case 2: 
+            return parseInt(Math.random()*(maxNum-minNum+1)+minNum,10); 
+        break; 
+            default: 
+                return 0; 
+            break; 
+    } 
+}
+
+
+init(); // 跳转“无障碍”选项，如果没有这个函数则默认不跳转。
+
+// 获取手机的分辨率
+var w = device.width();
+var h = device.height();
+
+
+if(!app.launchApp("抖音"))
+  	throw '打开app失败，终止程序。';
+
+sleep(5000); // 等待跳过广告
+
+//第二步开始自动循环
+for(var i = 0;i < times;i++){
+    //sleep(8000); // 每隔8秒刷新视频
+  	sleep(wait_send_time * randomNum(start_share, end_share));// 每隔n秒刷新视频
+    cs.mouseswipe(w / 2 - 30, h / 4 * 3, w / 2 + 20, h / 4 * 1,500);
+  
+  	// 结束条件提示信息，时间到点儿退出
+    var timenow = new Date().getHours();
+    if(timenow < start_time || timenow >= end_time){
+        toast("不在程序运行时间内，程序已终止。" + "时间:" + timenow);
+     	break;      
+    }
+}
+
+toast("程序执行完毕，已刷次数："+times);

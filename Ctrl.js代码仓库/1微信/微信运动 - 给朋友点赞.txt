@@ -1,0 +1,69 @@
+//--------------------------------------------------------------------------------------------
+//Ctrl.js 在线帮助：http://ikaiwei.com:8889/ctrljsapi/index.html
+//Ctrl.js IDE脚本编写环境：http://ikaiwei.com:8889/ctrljs/#/login
+//Ctrl.js 客户端app（开维控制精灵）下载：https://appstore.huawei.com/app/C100728387
+//Ctrl.js 使用：登录IDE注册、下载app登录（打开无障碍）、编写代码后‘同步代码’到app、‘执行代码’
+//        也可保存代码到云盘,即在‘我的脚本’下新建文件保存，app中查看‘我的代码’运行。
+//Ctrl.js 打包：可将代码直接生成apk，点击‘我的打包’中的‘新增’，选择脚本‘保存’等待下载即可
+//Ctrl.js 开维云控：远程控制手机：点击‘云控平台’，选择手机后‘打开此设备云控’，‘开始投屏’即可
+//--------------------------------------------------------------------------------------------
+
+// 脚本功能：微信中给"微信运动"的朋友自动点赞
+// 运行环境：华为手机，安卓9.0以上版本；微信版本V7.0.10
+// 注意事项：1.客户端无障碍功能开启 2.确保微信登陆状态 3.确保“微信运动”功能开启
+//           4.微信节点抓取会随版本变化，如果版本不一致需修改。
+
+init(); // 跳转“无障碍”选项，如果没有这个函数则默认不跳转。
+
+// 定义自己的昵称，不给自己点赞
+var my_name = "张三";
+
+// 打开微信
+if(!app.launchApp("微信"))
+  	throw '打开app失败，终止程序。';
+
+sleep(4000);
+
+// 点击搜索按钮
+cs.id("com.tencent.mm:id/r_").findOne().touch();
+sleep(2000);
+
+// 搜索微信运动
+cs.id("com.tencent.mm:id/m7").findOne().setText("微信运动");
+sleep(2000);
+
+// 点击搜索到的微信运动
+cs.text("微信运动").findOne().touch();
+sleep(2000);
+
+// 点击不熟排行榜
+cs.text("步数排行榜").findOne().touch();
+sleep(2000);
+
+// 给排行榜的人点赞,因为第一个是自己，所以不进行点击操作
+var size = cs.id("com.tencent.mm:id/brg").find().size();
+for(var i = 1;i < size;i++)
+{
+    if(cs.id("com.tencent.mm:id/brk").find().get(i).getText() == my_name)
+    {
+    	continue;
+    }
+	cs.id("com.tencent.mm:id/brj").find().get(i).click();
+    sleep(1000);
+}
+
+while(cs.id("com.tencent.mm:id/br9").findOne().scrollForward())
+{
+    sleep(2000);
+	var s = cs.id("com.tencent.mm:id/brg").find().size();
+    for(var i = 0;i < s;i++)
+    {
+        if(cs.id("com.tencent.mm:id/brk").find().get(i).getText() == my_name)
+        {
+            continue;
+        }
+        cs.id("com.tencent.mm:id/brj").find().get(i).click();
+        sleep(1000);
+    }
+}
+

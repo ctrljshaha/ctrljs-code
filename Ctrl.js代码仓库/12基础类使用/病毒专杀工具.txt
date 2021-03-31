@@ -1,0 +1,136 @@
+//--------------------------------------------------------------------------------------
+//Ctrl.js 在线开发环境：http://ikaiwei.com:8889/ctrljs/#/login
+//Ctrl.js 脚本应用市场：http://ikaiwei.com:8889/ctrljs/#/Market
+//Ctrl.js 手机app（开维控制精灵）华为下载：https://appstore.huawei.com/app/C100728387
+//Ctrl.js 使用：开发网站或app登录注册、编写代码后‘同步代码’到app、'执行代码'即可
+//Ctrl.js 打包：可将代码或网页链接直接生成apk，点击‘打包’按钮，等待下载即可
+//Ctrl.js 云控：监控所有手机运行状态，并可实时远控手机
+//Ctrl.js 保活：禁止屏幕休眠；开启悬浮框；关闭电池优化
+//--------------------------------------------------------------------------------------
+
+
+// 脚本功能：病毒专杀工具，EICAR查杀
+// 运行环境：华为手机，安卓9.0以上版本；
+
+// 文件总数
+var nFiles = 0;
+// 病毒文件数目
+var nVirusFiles = 0;
+var nVirusDels = 0;
+// 如果文件前八个字节与之匹配, 则为病毒文件
+var virusbytes = [0x58, 0x35, 0x4f, 0x21, 0x50, 0x25, 0x40, 0x41];
+
+// byte 数组转 string
+function bytes2Str(arr)
+{
+    var str = '',
+        _arr = arr;
+    for(var i = 0; i < _arr.length; i++) {
+    	var one = _arr[i].toString(2),
+            v = one.match(/^1+?(?=0)/);
+        if(v && one.length == 8) {
+          var bytesLength = v[0].length;
+          var store = _arr[i].toString(2).slice(7 - bytesLength);
+          for(var st = 1; st < bytesLength; st++) {
+          	store += _arr[st + i].toString(2).slice(2);
+          }
+          str += String.fromCharCode(parseInt(store, 2));
+          i += bytesLength - 1;
+      	} else {
+        	str += String.fromCharCode(_arr[i]);
+      	}
+  	}
+  	return str;
+}
+
+// 函数功能：查毒
+function scanCmd(strFileName)
+{
+	toast(strFileName);
+    nFiles++; // 文件个数加1
+
+	// 文件过大或者过小则不查杀
+  	var len = file.getSize(strFileName);
+    if(len < 7 || len > 5 * 1024 * 1024) 
+    	return;
+
+    // 读取文件前两个字节判断，如果不是则继续扫描
+    var bytes = file.readBytes(strFileName);
+    if(bytes[0] != virusbytes[0] && bytes[1] != virusbytes[1]) 
+      return;
+  
+    // 判断文件前8个字节是否符合特征码
+  	var i;
+    for(i = 2;i < virusbytes.length;i++)
+    {
+      if(bytes[i] == virusbytes[i])
+        continue;
+      else
+        break;
+    }  
+   
+    // 不匹配则继续扫描
+  	if(i != virusbytes.length)
+      return;
+  
+  	// 8个字节匹配后，再次判断是否存在EICAR，如果存在则是病毒，并且删除
+    var name = bytes2Str(bytes.slice(28, 33));
+  	if (name == "EICAR")
+    {
+	  toast(strFileName + " 发现病毒：" + name);
+	  nVirusFiles++;
+      if (file.delete(strFileName) == true)
+      {
+          nVirusDels++;
+	      toast(strFileName + " 病毒：" + name + " 删除病毒成功！");
+      }
+      else
+      {
+	      toast(strFileName + " 病毒：" + name + " 删除病毒失败！");
+      }
+    }
+}
+
+// 函数功能：遍历目录
+// 函数参数：strCurPath为当前目录
+function scanFilePath(strCurPath) 
+{
+  	// 判断传入路径，如果非法则退出
+    var str = /^([/][^\/:*?<>|]+[/]?)+$/;
+    if (str.test(strCurPath) == false) 
+		throw "非法文件路径：" + strCurPath;
+
+  	// 获取strCurPath当前目录下所有文件夹和文件
+    var arr = file.listDir(strCurPath);
+  
+    // 遍历文件和文件夹
+    for (var i = 0; i < arr.size(); i++) 
+    {
+        // 并接全目录
+        var FilePath =strCurPath+"/"+arr.get(i);
+      
+        // 判断文件还是路径
+        if (file.isDir(FilePath)) 
+        {
+			// 是路径
+           	scanFilePath(FilePath); // 递归遍历
+        } 
+      	else if (file.isFile(FilePath)) 
+      	{
+          	// 是文件
+          	scanCmd(FilePath); // 处理文件
+        }
+    }
+}
+
+// 设置目录
+var path ="/sdcard/baidu";
+//var path ="/sdcard";
+
+// 遍历目录
+scanFilePath(path);
+
+toast("文件总数：" + nFiles + "\n病毒总数：" + nVirusFiles + "\n删除病毒：" + nVirusDels);
+
+
+

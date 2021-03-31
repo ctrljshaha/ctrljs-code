@@ -1,0 +1,115 @@
+﻿//--------------------------------------------------------------------------------------------
+//Ctrl.js 在线帮助：http://ikaiwei.com:8889/ctrljsapi/index.html
+//Ctrl.js IDE环境：http://ikaiwei.com:8889/ctrljs/#/login
+//Ctrl.js 客户端app（开维控制精灵）下载：https://appstore.huawei.com/app/C100728387
+//Ctrl.js 使用：登录IDE注册、下载app登录（打开无障碍）、编写代码后‘同步代码’到app、‘执行代码’
+//        也可保存代码到云盘,即在‘我的脚本’下新建文件保存，app中查看‘我的代码’运行。
+//Ctrl.js 打包：可将代码直接生成apk，点击‘我的打包’中的‘新增’，选择脚本‘保存’等待下载即可
+//--------------------------------------------------------------------------------------------
+
+
+// 脚本功能：UI组建，包括悬浮框、按钮、进度条等
+// 运行环境：华为手机，安卓9.0以上版本；Ctrl.js2.8 (版本需一致)
+
+
+ui.layout( <vertical>
+                  <button id="bt" text="调用悬浮框"/>
+                   <button id="bt1" text="显示悬浮框"/>
+             </vertical>)
+
+
+ui.id("bt1").click(function(){
+fui.show()
+})
+
+ui.id("bt").click(function(){
+
+    fui.layout(
+                    <scroll w="*" h = "*">
+
+
+                      <vertical w="*" h= "auto">
+                      <input hint="请输入"/>
+                        <horizontal>
+                             <text id="txt" text="测试"/>
+                             <button id="bt" text="按钮"/>
+
+                             <button id="bt1" text="隐藏progressbar"/>
+                             <button id="bt2" text="获取进度"/>
+
+                        </horizontal>
+                            <button id="bt3" text="替换图标"/>
+
+                            <horizontal>
+
+                                   <button id="bt5" text="隐藏悬浮框"/>
+                                   <button id="bt6" text="关闭悬浮框"/>
+                             </horizontal>
+
+                            <img id="img" w="40" h="40" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAYAAAA6/NlyAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAEu0lEQVRoge3bW4iVVRQH8N+ZnDKxvJUGCSWUlXYle/ChiKAkIiu7UXQjonwNIopM8cHoAhkRGQXdfIiE0Ep8KalQoptRTiFFZiRlOo6TPuSk4zk97G9w5vidc77LPjNi84f1MN+391rrf9a+rL32N4xiFMcUjouo5zyciYPYH0FnBadiNiZiD2oR9JbGRdgiOFPDIXRhCWYU0Dcj6duV6BrQuyWxNaLowBcOO1Uv+7EKc4WINUIlabMq6dNI35eJzRHDWOzS2MEB6cd6XI/OQf07k2frkzat9HQnNkcUG7R2dECq2I53EtmePMvaf+MwcWqKu+RzuqhUcfcwcWqKTvmiXFQ2GDodRhQz0aN9ZHsSG0cVrkGf+GT7MG8YeeTCHeKS7sOdMR1stjcWxY2YH0nXh1gdSdf/E+2I8KVYigkl9ewVUsxNpT1qMzaKN4ejJxrtyEt7IuraE1EX2jOkp+JBnFxSzz68KuTqoyiK2BHuxDO4NpK+j/GoOAWF6BiH98Q/SHyCycPIIxMm4FPZCPTj30SynIFr+A7ThotMK4wXopA1Ym9gSiKv5Oj3bdKnFMpuS514E1fm6NMnbF098s3NS4QS0Ik5+hyBsoSXYkGO9jvxy6C/t+IPIYJZcBWW57AXFfMNrSo2kqqw2l4hvSzcIRTw1sm24FVxb5s4NcR0/JXBuUNYJttI6sDjsi1kvTgrGpsMjq3O4FQNa+SbNhWsyKj7I4wpzSYDbpFtKB/EOSn9ZwpRfx5Xp7yfhN0Z9FdxXxxKjTEe2zI4U8NnKf3PNrT2VcWTKe1eyGjjT+Eapm14IqMjNTyd0n9JSrsDwhmaEN2H8GMOO8viUjyMSfJVJh9O0bGoQdt1eFm2oVwve7UpC1ssX568KEXH6fghp54s8lRkrk7CjpxOrGqg6wQ8IKSKWXPpVtIt8ly+v4ATf2t+yqlgDl5SbCjXy8JIXFXweQEHqngxo43JeEw54l+JVLKaJeypRZzoFxavrIWG6cKPW2SO9+PCMkQHsLiA8fpIv5/DmUn4qaCtpWWIEiLzdUHj9XJA2H5uFRbBZriuoI1NSpatpio+nJtFvFvYd2c1sDsGvxfQ3a/knrwgMtm0qD8rPSprCuq8uRmhVqvanBbvm+EQfsNKIcnvTmnTiUdwQcq73oJ2L2v2stXx6vyCRr8RDuk/C8OMUK24J6VtBaekPG81zxuh0TTJhC7FhtUOHF+n61whGalvu8uRWVJFvgPEYOkqQzhLVSPPXLoYa4Xh3Stcls1NaTdb8Xx7ZxnCvSUIfy/kzWno0Pyzx3dL2C0695Hto7NGUhXy5Lzp3kLZKiqNpNTl2+YShgdIvyXbVck44TB/oKTNzWUIv13S+IDsFmpY84QvZAcwTbh4e04o18SwtbIM4dsiOTFYVgzSv7wN+m9vRqjV/PrA0JuCox1bhYNKQ7Qi3CcU1fpiedRG9AkLXhRfbxCnKlET0s21ifwaSWcPbopBdDDOwGtClTD2vCsq+/C68K8HmVDk7DhFyIsvFzKnGThN+689+oU9dptwQb5B+LB8dx4lMb7xqAhkJwo/xljhFFSfSdUc3mPrcbwj15P+pP0/QiR7hYSkGsHnUYziWMF/mXV4JVcZ8G0AAAAASUVORK5CYII="/>
+                            <datepicker id ="time"/>
+                            <timepicker id = "time1" />
+                            <progressbar id="pro"/>
+
+                            <seekbar id="seek"/>
+                            <checkbox id= "check" text="check"/>
+
+                        </vertical>
+                     </scroll>
+        );
+
+        fui.id("img").click(function(){
+                ui.id("txt").setTextColor("#ff0000")
+        })
+
+        fui.id("txt").setTextSize(20)
+
+
+        fui.id("bt").click(function(){
+            msg("现在的时间是"+ui.id("time").time()+" "+ui.id("time1").time())
+        })
+
+        var proview = fui.id("pro");
+        fui.id("bt1").click(function(){
+
+           if (proview.isShow() == "true"){
+           proview.hide()
+           ui.id("bt1").setText("开启progressbar")
+           }
+           else{
+           proview.show()
+           ui.id("bt1").setText("隐藏progressbar")
+           }
+        })
+
+        fui.id("seek").setPro(40)
+
+        fui.id("bt2").click(function(){
+            var pro = ui.id("seek").getPro();
+            msg(pro)
+        })
+
+        fui.id("seek").listener(function( n){
+
+             msg(n)
+        })
+
+        fui.id("check").listener(function( b){
+          msg("check选择状态"+b)
+
+        })
+        fui.id("bt3").click(function(){
+        fui.id("img").imgUrl("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1083249695,3150983445&fm=11&gp=0.jpg")
+        })
+
+
+        fui.id("bt5").click(function(){
+        fui.hide();
+        })
+        fui.id("bt6").click(function(){
+        fui.close();
+        })
+
+
+})
+

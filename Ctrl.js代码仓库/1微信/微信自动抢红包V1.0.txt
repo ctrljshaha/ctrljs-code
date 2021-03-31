@@ -1,0 +1,121 @@
+//--------------------------------------------------------------------------------------------------
+//Ctrl.js 开发环境：http://ikaiwei.com:8889/ctrljs/
+//Ctrl.js 视频教程：https://www.bilibili.com/video/BV1y54y1D7rr?from=search&seid=6533699600441036938
+//Ctrl.js 帮助文档：http://www.ikaiwei.com/download/ctrljs/ctrl.js.pdf
+//Ctrl.js 开发文档：http://ikaiwei.com:8889/ctrljsapi/index.html
+//Ctrl.js 手机app（开维控制精灵）华为下载：https://appstore.huawei.com/app/C100728387
+//Ctrl.js 后台保活：禁止屏幕休眠；开启悬浮框；关闭电池优化
+//--------------------------------------------------------------------------------------------------
+
+// 脚本功能：微信抢红包V1.0
+// 脚本使用：脚本运行后，切换到微信抢红包界面，点击开始运行脚本即可
+// 脚本范围：只抢最后一个红包；修改代码时注意抢不可太频繁
+// 运行环境：无需root权限；华为手机，安卓9.0以上版本；微信版本7.0.19
+// 注意事项：1.确保微信登陆状态 2.微信的节点会随版本变化，如果版本不同则需要修改代码
+
+
+// 判断是否开启无障碍权限，如果没有直接退出
+if(init()==false)
+	throw '权限未开启';
+
+// 悬浮窗代码
+var v = fui.layout(
+	<frame>
+  		<button id="action" text="开始运行" w="90" h="50"/>
+  	</frame>
+);
+
+var flag = true;
+var x = 0, y = 0;
+var startX = 0, startY = 0;
+var windowX = 0, windowY = 0;
+var positionX = 0, pisitionY = 0;
+var downTime;
+fui.id("action").touch(function(view, event){
+	switch(event.getAction()){
+      case event.ACTION_DOWN:
+        startX = event.getRawX();
+        startY = event.getRawY();
+        windowX = event.getRawX() - x;
+        windowY = event.getRawY() - y;
+        downTime = new Date().getTime();
+        break;
+      case event.ACTION_MOVE:
+        if(x !== 0){
+        	fui.setPostin(event.getRawX() - windowX, event.getRawY() - windowY);
+        }
+        x = event.getRawX() - windowX;
+        y = event.getRawY() - windowY;
+        break;
+      case event.ACTION_UP:
+        // 如果移动的距离小于 5, 则认为点击事件
+        if(Math.abs(event.getRawY() - startY) < 100 && Math.abs(event.getRawX() - startX) < 100){
+            // 如果点击的时间长于 1.5s, 则认为是长按事件
+            if(new Date().getTime() - downTime > 1500){
+            	longClick();
+            }else{
+            	onClick();
+            }
+        }
+        break;
+    }
+});
+
+// 函数功能：悬浮窗长按消失
+function longClick() {
+	fui.close();
+}
+
+// 函数功能：悬浮窗点击时间
+function onClick(){
+  var view = fui.id('action');
+  if(view.getText() == '开始运行'){
+  	view.setText("停止运行");
+    flag = true;
+    startrun();
+  }else{
+  	view.setText("开始运行");
+    flag = false;
+  }
+    
+}
+
+// 函数功能：在此添加监控脚本
+// 函数说明：此函数为监控红包控件状态，只循环抢最后一个红包
+// 函数参数：抢红包不可太频繁操作，否则容易被监控
+function startrun(){
+  	while(flag){
+      // 有红包消息
+      toast("开始扫描红包");
+      var hongBao = cs.text("微信红包").find();
+      if(hongBao.size() <= 0){
+        toast("没有找到红包");
+        sleep(3000);
+        continue;
+      }
+      // 红包个数
+      toast("找到红包个数为：" + hongBao.size());
+      for(var i = hongBao.size() - 1;i >= 0 && i > hongBao.size() - 2;i--){
+        // 红包消息不在了, 被消息冲掉
+        if(hongBao.get(i) == null){
+          break;
+        }
+        // 红包消息还在, 没有被消息冲掉
+        // 红包还没有抢完
+        if(cs.text("微信红包").find().get(i).getParent().getParent().getChild(0).getChild(1).getChildCount() == 1){
+          // 点击红包消息
+          cs.text("微信红包").find().get(i).getParent().getParent().getParent().click();
+          sleep(2000);
+          // 如果红包可以打开
+          if(cs.desc("开").find().size() > 0){
+            // 开红包
+            cs.desc("开").findOnce().click();
+            sleep(2000);
+          }
+          back();
+          sleep(2000);
+        }
+      }
+        
+    }  
+}
